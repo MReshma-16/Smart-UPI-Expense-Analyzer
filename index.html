@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart UPI Expense Analyzer & Money Saving Assistant</title>
+    <!-- Google Fonts: Outfit for headings, Inter for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="light-theme"> <!-- Default to Light theme for clean fintech UI -->
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="logo-icon">
+                    <i data-lucide="wallet-cards" class="glow-icon"></i>
+                </div>
+                <h2>UPI<span>Saver</span></h2>
+            </div>
+
+            <!-- Spending Score Widget in Sidebar -->
+            <div class="sidebar-score-card">
+                <div class="score-header">
+                    <span>Spending Score</span>
+                    <span class="score-value" id="sidebar-score-val">75</span>
+                </div>
+                <div class="score-progress-bar">
+                    <div class="score-progress-fill" id="sidebar-score-fill" style="width: 75%;"></div>
+                </div>
+                <p class="score-status" id="sidebar-score-status">Healthy Spending</p>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="transactions">
+                    <i data-lucide="arrow-left-right"></i>
+                    <span>Transactions</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="analytics">
+                    <i data-lucide="sparkles"></i>
+                    <span>AI Insights</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="savings">
+                    <i data-lucide="target"></i>
+                    <span>Savings Planner</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">AD</div>
+                    <div class="user-info">
+                        <h4>Demo Account</h4>
+                        <p>Student Mini-Project</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="main-content">
+            <!-- Top Navbar -->
+            <header class="top-nav">
+                <div class="nav-title-section">
+                    <h1 id="page-title">Overview</h1>
+                    <p class="current-date" id="nav-date">Monday, July 6, 2026</p>
+                </div>
+                <div class="nav-actions">
+                    <!-- Theme Toggle Button -->
+                    <button class="btn-icon" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
+                        <i data-lucide="moon" id="theme-toggle-icon"></i>
+                    </button>
+                    <!-- Quick Simulation Trigger -->
+                    <button class="btn btn-primary" id="open-sim-btn">
+                        <i data-lucide="zap"></i>
+                        <span>Simulate Payment</span>
+                    </button>
+                    <!-- Notification Bell with Badge -->
+                    <button class="btn-icon" id="toggle-notifications-btn">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-badge" id="notif-badge-count">0</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <!-- ================= TAB: OVERVIEW / DASHBOARD ================= -->
+                <section id="tab-dashboard" class="tab-pane active">
+                    <!-- KPI Cards Grid -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card income">
+                            <div class="kpi-icon">
+                                <i data-lucide="trending-up"></i>
+                            </div>
+                            <div class="kpi-details">
+                                <h3>Total Income</h3>
+                                <p class="kpi-value" id="kpi-income">₹45,000</p>
+                                <span class="kpi-trend positive"><i data-lucide="arrow-up-right"></i> Base monthly</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card expenses">
+                            <div class="kpi-icon">
+                                <i data-lucide="trending-down"></i>
+                            </div>
+                            <div class="kpi-details">
+                                <h3>Total Expenses</h3>
+                                <p class="kpi-value" id="kpi-expenses">₹18,450</p>
+                                <span class="kpi-trend negative" id="kpi-expenses-ratio">41% of income</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card savings">
+                            <div class="kpi-icon">
+                                <i data-lucide="piggy-bank"></i>
+                            </div>
+                            <div class="kpi-details">
+                                <h3>Estimated Savings</h3>
+                                <p class="kpi-value" id="kpi-savings">₹26,550</p>
+                                <span class="kpi-trend positive" id="kpi-savings-rate">59% saved</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card daily-limit">
+                            <div class="kpi-icon">
+                                <i data-lucide="gauge"></i>
+                            </div>
+                            <div class="kpi-details">
+                                <h3>Daily Spent</h3>
+                                <p class="kpi-value" id="kpi-daily">₹350 / ₹500</p>
+                                <div class="mini-progress-bg">
+                                    <div class="mini-progress-fill" id="daily-budget-fill" style="width: 70%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Dashboard Layout -->
+                    <div class="dashboard-layout">
+                        <!-- Left Columns: Quick Analytics & Recent Tx -->
+                        <div class="dashboard-left">
+                            <!-- Quick AI Tip Banner -->
+                            <div class="ai-banner">
+                                <div class="ai-banner-icon">
+                                    <i data-lucide="sparkles"></i>
+                                </div>
+                                <div class="ai-banner-content">
+                                    <h4>AI Financial Coach Tip</h4>
+                                    <p id="dashboard-ai-tip">Analyzing your weekend transactions... Spending on Food is 15% higher than your average weekday.</p>
+                                </div>
+                            </div>
+
+                            <!-- Charts Preview Grid -->
+                            <div class="dashboard-charts-row">
+                                <div class="card chart-card">
+                                    <div class="card-header">
+                                        <h3>Expense Breakdown</h3>
+                                        <i data-lucide="pie-chart" class="text-muted"></i>
+                                    </div>
+                                    <div class="chart-wrapper">
+                                        <canvas id="categoryDonutChartDashboard"></canvas>
+                                    </div>
+                                </div>
+                                <div class="card score-gauge-card">
+                                    <div class="card-header">
+                                        <h3>Financial Health Score</h3>
+                                        <i data-lucide="shield-check" class="text-muted"></i>
+                                    </div>
+                                    <div class="score-radial-wrapper">
+                                        <svg class="radial-gauge" viewBox="0 0 120 120">
+                                            <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
+                                            <circle class="gauge-fill" id="radial-gauge-fill" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="78.5"></circle>
+                                        </svg>
+                                        <div class="score-center">
+                                            <span id="score-radial-number">75</span>
+                                            <span class="score-max">/100</span>
+                                        </div>
+                                    </div>
+                                    <div class="score-insights" id="score-radial-tip">
+                                        Great! You are keeping within 80% of your daily budgets this week.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Transactions -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Recent UPI Payments</h3>
+                                    <a href="#" class="view-all-link" id="view-all-tx-link">View All History</a>
+                                </div>
+                                <div class="transaction-table-wrapper">
+                                    <table class="transaction-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Merchant</th>
+                                                <th>Category</th>
+                                                <th>Date & Time</th>
+                                                <th>Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recent-transactions-tbody">
+                                            <!-- Dynamically Populated -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Columns: Quick SMS paste & Active challenges widget -->
+                        <div class="dashboard-right-col">
+                            <!-- SMS quick parse card -->
+                            <div class="card sms-quick-card">
+                                <div class="card-header">
+                                    <h3>Quick SMS Input</h3>
+                                    <i data-lucide="smartphone" class="text-muted"></i>
+                                </div>
+                                <p class="card-desc">Paste standard bank SMS templates to check parser output immediately.</p>
+                                <div class="sms-textarea-group">
+                                    <textarea id="quick-sms-input" placeholder="Paste bank SMS here..."></textarea>
+                                    <button class="btn btn-secondary btn-sm btn-block" id="quick-parse-btn">
+                                        <i data-lucide="wand-2"></i> Parse & Save UPI
+                                    </button>
+                                </div>
+                                <div class="sms-samples-row">
+                                    <button class="btn-sample-sms" data-sms="Debited Rs. 350.00 from A/C XX1234 to Zomato UPI. Ref 60192837.">Swiggy/Zomato ₹350</button>
+                                    <button class="btn-sample-sms" data-sms="Sent Rs. 180.00 to Starbucks @ UPI Ref no 192837461">Starbucks ₹180</button>
+                                </div>
+                            </div>
+
+                            <!-- Active Budgets overview -->
+                            <div class="card budget-widget-card">
+                                <div class="card-header">
+                                    <h3>Monthly Budget Pacing</h3>
+                                    <i data-lucide="sliders" class="text-muted"></i>
+                                </div>
+                                <div class="budget-overall-status">
+                                    <div class="budget-status-row">
+                                        <span class="budget-spent" id="budget-widget-spent">₹18,450 spent</span>
+                                        <span class="budget-limit" id="budget-widget-limit">of ₹25,000</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" id="budget-widget-fill" style="width: 74%;"></div>
+                                    </div>
+                                    <span class="budget-days-left" id="budget-widget-days">24 days remaining in month</span>
+                                </div>
+                            </div>
+
+                            <!-- Active Challenges Widget -->
+                            <div class="card challenge-widget-card">
+                                <div class="card-header">
+                                    <h3>Active Challenge</h3>
+                                    <i data-lucide="trophy" class="text-accent"></i>
+                                </div>
+                                <div class="challenge-content-quick" id="dashboard-challenge-widget">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= TAB: TRANSACTIONS (STREAMLINED VIEW) ================= -->
+                <section id="tab-transactions" class="tab-pane">
+                    <div class="transactions-layout-simple">
+                        <!-- Quick actions to show forms -->
+                        <div class="tx-quick-actions-bar">
+                            <button class="btn btn-secondary" id="toggle-manual-form-btn">
+                                <i data-lucide="plus-circle"></i> Log Manual UPI
+                            </button>
+                            <button class="btn btn-secondary" id="toggle-csv-import-btn">
+                                <i data-lucide="upload-cloud"></i> Import Bank Statement (CSV)
+                            </button>
+                        </div>
+
+                        <!-- Collapsible manual entry form -->
+                        <div class="card collapsible-panel hidden" id="manual-form-panel">
+                            <div class="card-header">
+                                <h3>Log Manual UPI Payment</h3>
+                                <button class="btn-icon btn-xs" id="close-manual-form"><i data-lucide="x"></i></button>
+                            </div>
+                            <form id="manual-tx-form" class="standard-form">
+                                <div class="form-row-2">
+                                    <div class="form-group">
+                                        <label for="manual-amount">Amount (₹)</label>
+                                        <input type="number" id="manual-amount" placeholder="e.g. 250" required min="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="manual-merchant">Merchant Name</label>
+                                        <input type="text" id="manual-merchant" placeholder="e.g. KFC Delivery" required>
+                                    </div>
+                                </div>
+                                <div class="form-row-2">
+                                    <div class="form-group">
+                                        <label for="manual-category">Category</label>
+                                        <select id="manual-category">
+                                            <option value="Food">Food</option>
+                                            <option value="Shopping">Shopping</option>
+                                            <option value="Travel">Travel</option>
+                                            <option value="Bills">Bills</option>
+                                            <option value="Entertainment">Entertainment</option>
+                                            <option value="Education">Education</option>
+                                            <option value="Medical">Medical</option>
+                                            <option value="Others" selected>Others</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="manual-date">Date & Time</label>
+                                        <input type="datetime-local" id="manual-date" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i data-lucide="plus"></i> Add Transaction Record
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Collapsible CSV import panel -->
+                        <div class="card collapsible-panel hidden" id="csv-import-panel">
+                            <div class="card-header">
+                                <h3>Import Bank Statement CSV</h3>
+                                <button class="btn-icon btn-xs" id="close-csv-import"><i data-lucide="x"></i></button>
+                            </div>
+                            <p class="card-desc">Upload statement CSV to parse multiple transactions. Format: <code>Date, Merchant, Amount, Category</code>.</p>
+                            
+                            <div class="drag-drop-zone" id="csv-drag-drop">
+                                <i data-lucide="upload-cloud"></i>
+                                <p>Drag & Drop CSV here or <span>Browse Files</span></p>
+                                <input type="file" id="csv-file-input" accept=".csv" class="hidden-input">
+                            </div>
+                            <div id="csv-import-status" class="import-status-text"></div>
+                            <div class="csv-sample-btn-wrapper">
+                                <button class="btn btn-outline btn-xs" id="load-sample-csv-btn">
+                                    <i data-lucide="plus-circle"></i> Load Sample Statement (CSV)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Full list of transactions -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>UPI Transaction History</h3>
+                                <button class="btn btn-outline btn-sm text-danger" id="clear-all-data-btn" style="border-color: rgba(239, 68, 68, 0.2)">
+                                    <i data-lucide="trash-2"></i> Reset Demo Database
+                                </button>
+                            </div>
+                            <div class="filter-header-row" style="margin-bottom: 20px;">
+                                <div class="search-box">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" id="tx-search-input" placeholder="Search merchants...">
+                                </div>
+                                <div class="filter-dropdowns">
+                                    <select id="tx-category-filter">
+                                        <option value="All">All Categories</option>
+                                        <option value="Food">Food</option>
+                                        <option value="Shopping">Shopping</option>
+                                        <option value="Travel">Travel</option>
+                                        <option value="Bills">Bills</option>
+                                        <option value="Entertainment">Entertainment</option>
+                                        <option value="Education">Education</option>
+                                        <option value="Medical">Medical</option>
+                                        <option value="Others">Others</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="transaction-table-wrapper">
+                                <table class="transaction-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Merchant Name</th>
+                                            <th>Category</th>
+                                            <th>Date & Time</th>
+                                            <th>Amount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="all-transactions-tbody">
+                                        <!-- Dynamically Populated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= TAB: ANALYTICS / AI INSIGHTS ================= -->
+                <section id="tab-analytics" class="tab-pane">
+                    <div class="analytics-ai-banner">
+                        <div class="ai-brain-icon">
+                            <i data-lucide="cpu" class="animate-pulse"></i>
+                        </div>
+                        <div class="analytics-ai-content">
+                            <h2>AI Behavior & Spending Analysis</h2>
+                            <p>Our analysis engine studies your spending patterns, identifies weekend spikes, flags late-night purchases, and explains it in plain language.</p>
+                        </div>
+                    </div>
+
+                    <div class="analytics-layout">
+                        <!-- Left Panel: Graphs -->
+                        <div class="analytics-graphs">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Weekly Category Budgets vs Actual</h3>
+                                    <i data-lucide="bar-chart-3" class="text-muted"></i>
+                                </div>
+                                <div class="chart-wrapper-large">
+                                    <canvas id="categoryTrendBarChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Cumulative Spending (Last 15 Days)</h3>
+                                    <i data-lucide="line-chart" class="text-muted"></i>
+                                </div>
+                                <div class="chart-wrapper-large">
+                                    <canvas id="dailyExpenseLineChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: AI Coaching Explainer -->
+                        <div class="analytics-ai-panel">
+                            <div class="card ai-explainer-card">
+                                <div class="card-header border-accent">
+                                    <div class="header-ai-title">
+                                        <i data-lucide="sparkles" class="text-accent"></i>
+                                        <h3>Habit Explainer</h3>
+                                    </div>
+                                    <span class="badge badge-accent">AI Coach</span>
+                                </div>
+                                <div class="ai-explainer-body" id="ai-explainer-container">
+                                    <div class="ai-loading">
+                                        <div class="spinner"></div>
+                                        <p>Analyzing transaction histories...</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Financial Score Card</h3>
+                                    <i data-lucide="shield-alert" class="text-muted"></i>
+                                </div>
+                                <div class="score-breakdown-details">
+                                    <div class="score-header-large">
+                                        <h1 id="score-large-val">75</h1>
+                                        <div class="score-rating-badge" id="score-rating-badge">Good Score</div>
+                                    </div>
+                                    <p class="score-desc" id="score-large-desc">Your spending is healthy overall, but you have high impulsive habits late at night.</p>
+                                    
+                                    <hr class="card-divider">
+
+                                    <h4>Score Factor Breakdown</h4>
+                                    <div class="factor-list">
+                                        <div class="factor-item">
+                                            <div class="factor-meta">
+                                                <span>Budget Adherence</span>
+                                                <span class="factor-val text-success" id="factor-budget-val">+25 pts</span>
+                                            </div>
+                                            <div class="mini-progress-bg"><div class="mini-progress-fill bg-success" id="factor-budget-fill" style="width: 85%;"></div></div>
+                                        </div>
+                                        <div class="factor-item">
+                                            <div class="factor-meta">
+                                                <span>Impulse Control</span>
+                                                <span class="factor-val text-warning" id="factor-impulse-val">-10 pts</span>
+                                            </div>
+                                            <div class="mini-progress-bg"><div class="mini-progress-fill bg-warning" id="factor-impulse-fill" style="width: 55%;"></div></div>
+                                        </div>
+                                        <div class="factor-item">
+                                            <div class="factor-meta">
+                                                <span>Daily Consistency</span>
+                                                <span class="factor-val text-success" id="factor-consistency-val">+15 pts</span>
+                                            </div>
+                                            <div class="mini-progress-bg"><div class="mini-progress-fill bg-success" id="factor-consistency-fill" style="width: 75%;"></div></div>
+                                        </div>
+                                        <div class="factor-item">
+                                            <div class="factor-meta">
+                                                <span>Challenges Achievement</span>
+                                                <span class="factor-val text-danger" id="factor-challenge-val">+5 pts</span>
+                                            </div>
+                                            <div class="mini-progress-bg"><div class="mini-progress-fill bg-danger" id="factor-challenge-fill" style="width: 30%;"></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= TAB: SAVINGS PLANNER (CONSOLIDATED VIEW) ================= -->
+                <section id="tab-savings" class="tab-pane">
+                    <!-- Top section: Budgets & Savings Goals -->
+                    <div class="budgets-layout">
+                        <!-- Left Column: Setting and Viewing Budgets -->
+                        <div class="budget-limits-panel">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Set Spending Budgets</h3>
+                                    <i data-lucide="sliders" class="text-muted"></i>
+                                </div>
+                                <form id="settings-budget-form" class="standard-form">
+                                    <div class="form-row-2">
+                                        <div class="form-group">
+                                            <label for="settings-monthly-budget">Monthly Limit (₹)</label>
+                                            <input type="number" id="settings-monthly-budget" value="25000" min="1000">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="settings-daily-budget">Daily Limit (₹)</label>
+                                            <input type="number" id="settings-daily-budget" value="500" min="50">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i data-lucide="check"></i> Update Limits
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Category Budgets Breakdown</h3>
+                                    <i data-lucide="layout-list" class="text-muted"></i>
+                                </div>
+                                <div class="category-budgets-list" id="category-budgets-container">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Goals and Challenge Planner -->
+                        <div class="goals-panel">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Create Savings Goal</h3>
+                                    <i data-lucide="target" class="text-muted"></i>
+                                </div>
+                                <form id="create-goal-form" class="standard-form">
+                                    <div class="form-group">
+                                        <label for="goal-name">What are you saving for?</label>
+                                        <input type="text" id="goal-name" placeholder="e.g. Laptop, Bike" required>
+                                    </div>
+                                    <div class="form-row-2">
+                                        <div class="form-group">
+                                            <label for="goal-target">Target Cost (₹)</label>
+                                            <input type="number" id="goal-target" placeholder="e.g. 60000" required min="100">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="goal-timeframe">Target Months</label>
+                                            <input type="number" id="goal-timeframe" placeholder="e.g. 6" required min="1" max="60">
+                                        </div>
+                                    </div>
+                                    <div class="goal-preview-math" id="goal-math-preview">
+                                        Enter details to view estimated daily saving requirements.
+                                    </div>
+                                    <button type="submit" class="btn btn-accent btn-block">
+                                        <i data-lucide="plus-circle"></i> Create Goal
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Active Savings Goals</h3>
+                                    <i data-lucide="piggy-bank" class="text-muted"></i>
+                                </div>
+                                <div class="goals-list-container" id="goals-list-container">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Section: Weekly Challenges and Cooldown timer -->
+                    <div class="challenges-layout" style="margin-top: 10px;">
+                        <!-- Left panel: Weekly Saving Challenges & Impulse Buy Box -->
+                        <div class="challenges-left">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Weekly Saving Challenges</h3>
+                                    <i data-lucide="award" class="text-muted"></i>
+                                </div>
+                                <div class="challenges-grid" id="challenges-grid">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Impulse Buy Helper -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Impulse Buy Cooldown Box (24-Hour Waiter)</h3>
+                                    <i data-lucide="clock" class="text-accent animate-pulse"></i>
+                                </div>
+                                <p class="card-desc">Add non-essential items you want to buy. Wait 24 hours. The app counts down and saves you from impulse purchases.</p>
+                                
+                                <form id="add-cooldown-form" class="standard-form">
+                                    <div class="form-row-3">
+                                        <div class="form-group flex-2">
+                                            <input type="text" id="cooldown-item-name" placeholder="Item Name (e.g., Gaming Headset)" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="number" id="cooldown-item-cost" placeholder="Cost (₹)" required min="1">
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-accent btn-sm">
+                                                <i data-lucide="plus"></i> Add Item
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <div class="cooldown-list-wrapper">
+                                    <div class="cooldown-list-header">
+                                        <span>Item Description</span>
+                                        <span>Timer / Status</span>
+                                        <span>Action</span>
+                                    </div>
+                                    <div class="cooldown-list-items" id="cooldown-items-container">
+                                        <!-- Dynamically Populated -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right panel: Personalized Savings advice list -->
+                        <div class="challenges-right">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Personalized Savings Advice</h3>
+                                    <i data-lucide="lightbulb" class="text-accent"></i>
+                                </div>
+                                <div class="custom-advice-list" id="custom-advice-container">
+                                    <!-- Populated dynamically depending on highest spending categories -->
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Smart Daily Saving Tips</h3>
+                                    <i data-lucide="sparkles" class="text-muted"></i>
+                                </div>
+                                <div class="saving-tips-static-grid">
+                                    <div class="static-tip-item">
+                                        <div class="tip-icon"><i data-lucide="droplet"></i></div>
+                                        <div class="tip-text">
+                                            <h5>Carry Water Bottles</h5>
+                                            <p>Buying bottled water costs ₹20 per bottle. Carrying your own saves ₹600+ a month.</p>
+                                        </div>
+                                    </div>
+                                    <div class="static-tip-item">
+                                        <div class="tip-icon"><i data-lucide="coffee"></i></div>
+                                        <div class="tip-text">
+                                            <h5>Reduce Subscription Excess</h5>
+                                            <p>Audits show users waste ₹400-₹800 monthly on subscriptions they don't watch.</p>
+                                        </div>
+                                    </div>
+                                    <div class="static-tip-item">
+                                        <div class="tip-icon"><i data-lucide="shopping-bag"></i></div>
+                                        <div class="tip-text">
+                                            <h5>Compare Merchant Rates</h5>
+                                            <p>Before grocery checkouts, compare Blinkit, Zepto, and local stores for discounts.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Smartphone-like Notifications Center (Right Drawer) -->
+        <aside class="notifications-drawer" id="notifications-drawer">
+            <div class="drawer-header">
+                <h3>Notifications</h3>
+                <div class="drawer-header-actions">
+                    <button class="btn-icon" id="clear-notifications-btn" title="Clear All">
+                        <i data-lucide="trash"></i>
+                    </button>
+                    <button class="btn-icon" id="close-notifications-btn">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="drawer-body" id="notifications-container">
+                <!-- Notifications populated here -->
+                <div class="no-notifications">
+                    <i data-lucide="bell-off"></i>
+                    <p>No new notifications</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Modal: UPI Payment Simulation Dashboard -->
+        <div class="modal" id="simulation-modal">
+            <div class="modal-overlay" id="sim-modal-overlay"></div>
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3>Simulate UPI Payment (Demo Center)</h3>
+                    <button class="btn-icon" id="close-sim-btn">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-desc">Simulate live payments to trigger Smart Alerts, analyze SMS parsing in real time, and view immediate chart updates.</p>
+                    
+                    <div class="sim-presets-title">Quick Preset Scenarios</div>
+                    <div class="sim-presets-grid">
+                        <div class="sim-preset-card" data-merchant="Zomato" data-amount="350" data-category="Food">
+                            <div class="preset-icon food"><i data-lucide="pizza"></i></div>
+                            <div class="preset-info">
+                                <h5>Food Delivery</h5>
+                                <p>Zomato • ₹350</p>
+                            </div>
+                        </div>
+                        <div class="sim-preset-card" data-merchant="Starbucks" data-amount="180" data-category="Food">
+                            <div class="preset-icon food"><i data-lucide="coffee"></i></div>
+                            <div class="preset-info">
+                                <h5>Impulse Coffee</h5>
+                                <p>Starbucks • ₹180</p>
+                            </div>
+                        </div>
+                        <div class="sim-preset-card" data-merchant="Zara Fashion (Night)" data-amount="4200" data-category="Shopping" data-night="true">
+                            <div class="preset-icon shopping"><i data-lucide="shopping-cart"></i></div>
+                            <div class="preset-info">
+                                <h5>Late Night Shopping</h5>
+                                <p>Zara • ₹4,200 (Impulsive)</p>
+                            </div>
+                        </div>
+                        <div class="sim-preset-card" data-merchant="Netflix Subscription" data-amount="649" data-category="Entertainment">
+                            <div class="preset-icon ent"><i data-lucide="play"></i></div>
+                            <div class="preset-info">
+                                <h5>Recurring Billing</h5>
+                                <p>Netflix • ₹649</p>
+                            </div>
+                        </div>
+                        <div class="sim-preset-card" data-merchant="Ola Cabs" data-amount="290" data-category="Travel">
+                            <div class="preset-icon travel"><i data-lucide="car"></i></div>
+                            <div class="preset-info">
+                                <h5>City Travel</h5>
+                                <p>Ola Cabs • ₹290</p>
+                            </div>
+                        </div>
+                        <div class="sim-preset-card" data-merchant="Airtel Recharge" data-amount="749" data-category="Bills">
+                            <div class="preset-icon bills"><i data-lucide="phone"></i></div>
+                            <div class="preset-info">
+                                <h5>Mobile Bill</h5>
+                                <p>Airtel • ₹749</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sim-divider"><span>OR CUSTOM SIMULATION</span></div>
+                    
+                    <form id="custom-sim-form" class="standard-form">
+                        <div class="form-row-3">
+                            <div class="form-group flex-2">
+                                <label for="sim-merchant">Merchant / Description</label>
+                                <input type="text" id="sim-merchant" placeholder="e.g. Swiggy Instamart" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sim-amount">Amount (₹)</label>
+                                <input type="number" id="sim-amount" placeholder="e.g. 500" required min="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="sim-category">Category</label>
+                                <select id="sim-category">
+                                    <option value="Food">Food</option>
+                                    <option value="Shopping">Shopping</option>
+                                    <option value="Travel">Travel</option>
+                                    <option value="Bills">Bills</option>
+                                    <option value="Entertainment">Entertainment</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Medical">Medical</option>
+                                    <option value="Others" selected>Others</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row-2">
+                            <div class="form-group checkbox-group">
+                                <input type="checkbox" id="sim-night-purchase">
+                                <label for="sim-night-purchase">Simulate Late Night Purchase (triggers impulse warning)</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="sim-date-offset">Transaction Date</label>
+                                <select id="sim-date-offset">
+                                    <option value="0">Today (Now)</option>
+                                    <option value="-1">Yesterday</option>
+                                    <option value="-2">2 days ago</option>
+                                    <option value="-7">1 week ago</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i data-lucide="zap"></i> Simulate Custom UPI SMS Alert
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Quick-Add Toast Notification for instant feedback -->
+        <div class="toast-notification" id="app-toast">
+            <div class="toast-icon">
+                <i data-lucide="info"></i>
+            </div>
+            <div class="toast-body">
+                <h5 id="toast-title">Notification</h5>
+                <p id="toast-message">Message details go here.</p>
+            </div>
+            <button class="toast-close" id="toast-close-btn">&times;</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="data.js"></script>
+    <script src="parser.js"></script>
+    <script src="ai-coach.js"></script>
+    <script src="charts.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

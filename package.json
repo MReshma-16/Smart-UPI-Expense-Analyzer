@@ -1,0 +1,16 @@
+{
+  "name": "smart-upi-savings-assistant",
+  "version": "1.0.0",
+  "description": "A premium web app that parses simulated or imported bank UPI transaction SMS records, visualizes spending categories and timelines, tracks budgets and savings goals, and displays proactive AI-driven financial recommendations.",
+  "scripts": {
+    "dev": "npx -y browser-sync start --server --files \"*.html, *.css, *.js\" --port 3000"
+  },
+  "keywords": [
+    "upi",
+    "expense-tracker",
+    "money-saving",
+    "ai-coach"
+  ],
+  "author": "Antigravity",
+  "license": "MIT"
+}
