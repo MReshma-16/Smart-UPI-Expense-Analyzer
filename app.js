@@ -32,6 +32,32 @@ document.addEventListener("DOMContentLoaded", function() {
         lucide.createIcons();
     }
 
+    // 2b. User Profile Session Loader & Logout
+    const userProfileJSON = localStorage.getItem("upi_user_profile");
+    if (userProfileJSON) {
+        try {
+            const profile = JSON.parse(userProfileJSON);
+            const avatarEl = document.getElementById("sidebar-user-avatar");
+            const nameEl = document.getElementById("sidebar-user-name");
+            const subtitleEl = document.getElementById("sidebar-user-subtitle");
+
+            if (avatarEl) avatarEl.textContent = profile.avatarText || "US";
+            if (nameEl) nameEl.textContent = profile.username || "User";
+            if (subtitleEl) subtitleEl.textContent = profile.email || "UPI Saver User";
+        } catch(e) {
+            console.warn("Could not parse user profile:", e);
+        }
+    }
+
+    // Logout button handler
+    const logoutBtn = document.getElementById("logout-btn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", function() {
+            localStorage.removeItem("upi_user_profile");
+            window.location.href = "login.html";
+        });
+    }
+
     // 3. Tab Navigation Logic
     const menuItems = document.querySelectorAll(".menu-item");
     const tabPanes = document.querySelectorAll(".tab-pane");
