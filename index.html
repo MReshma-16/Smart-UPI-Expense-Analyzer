@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Session Gate Check -->
+    <script>
+        if (!localStorage.getItem("upi_user_profile")) {
+            window.location.href = "login.html";
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart UPI Expense Analyzer & Money Saving Assistant</title>
@@ -58,11 +64,17 @@
 
             <div class="sidebar-footer">
                 <div class="user-profile">
-                    <div class="user-avatar">AD</div>
+                    <div class="user-avatar" id="sidebar-user-avatar">AD</div>
                     <div class="user-info">
-                        <h4>Demo Account</h4>
-                        <p>Student Mini-Project</p>
+                        <h4 id="sidebar-user-name">Demo Account</h4>
+                        <p id="sidebar-user-subtitle">Student Mini-Project</p>
                     </div>
+                </div>
+                <div class="logout-btn-wrapper">
+                    <button class="btn-logout" id="logout-btn">
+                        <i data-lucide="log-out"></i>
+                        <span>Logout</span>
+                    </button>
                 </div>
             </div>
         </aside>
