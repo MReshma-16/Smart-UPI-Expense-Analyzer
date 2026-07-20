@@ -2528,3 +2528,186 @@ body.dark-theme .preset-icon.shopping {
         width: 100%;
     }
 }
+
+/* ==========================================================================
+   20. Login Page & Authentication Screen Styles
+   ========================================================================== */
+.login-page-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100vw;
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+}
+
+.login-theme-wrapper {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    z-index: 10;
+}
+
+/* Background Blobs */
+.blob {
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: -1;
+    opacity: 0.12;
+    transition: background var(--transition-normal), opacity var(--transition-normal);
+}
+body.dark-theme .blob {
+    opacity: 0.22;
+}
+.blob-1 {
+    background: var(--primary);
+    top: 10%;
+    left: 10%;
+}
+.blob-2 {
+    background: var(--accent);
+    bottom: 10%;
+    right: 10%;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    z-index: 5;
+    animation: fadeIn var(--transition-normal) forwards;
+}
+
+.login-card {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    padding: 35px 30px;
+}
+
+.login-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.login-brand h2 {
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.login-brand h2 span {
+    color: var(--accent);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.login-header h3 {
+    font-size: 20px;
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+
+.login-header p {
+    font-size: 13px;
+    color: var(--text-sec);
+    line-height: 1.4;
+}
+
+/* Inputs with Inner Icons */
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: 14px;
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: var(--transition-fast);
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding-left: 42px !important;
+}
+
+.input-with-icon input:focus + i {
+    color: var(--primary);
+}
+
+/* Social Buttons Grid */
+.social-login-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.social-btn {
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.social-icon {
+    flex-shrink: 0;
+}
+
+.social-btn i {
+    width: 18px;
+    height: 18px;
+    color: var(--text-sec);
+}
+
+body.dark-theme .social-btn i {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.login-footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 24px;
+    line-height: 1.4;
+}
+
+/* Sidebar Logout Button Style */
+.logout-btn-wrapper {
+    margin-top: 10px;
+}
+
+.btn-logout {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--danger);
+    background: var(--danger-glow);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-logout:hover {
+    background: var(--danger);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+}
