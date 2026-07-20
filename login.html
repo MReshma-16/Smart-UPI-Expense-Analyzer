@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart UPI Expense Analyzer</title>
+    <!-- Google Fonts: Outfit for headings, Inter for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="light-theme login-page-body">
+    <!-- Theme Toggle in Corner -->
+    <div class="login-theme-wrapper">
+        <button class="btn-icon" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
+            <i data-lucide="moon" id="theme-toggle-icon"></i>
+        </button>
+    </div>
+
+    <!-- Decorative Background Blobs for Visual depth -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="login-container">
+        <div class="card login-card">
+            <!-- Brand Logo -->
+            <div class="login-brand">
+                <div class="logo-icon">
+                    <i data-lucide="wallet-cards"></i>
+                </div>
+                <h2>UPI<span>Saver</span></h2>
+            </div>
+            
+            <div class="login-header">
+                <h3>Welcome to UPISaver</h3>
+                <p>Track your UPI spending patterns and save money smartly</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="standard-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="user"></i>
+                        <input type="text" id="username" placeholder="e.g. Rahul Sharma" required minlength="3">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email ID</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="mail"></i>
+                        <input type="email" id="email" placeholder="e.g. rahul@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="mobile">Mobile Number</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="phone"></i>
+                        <input type="tel" id="mobile" placeholder="10-digit mobile number" required pattern="^[6-9]\d{9}$">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 10px;">
+                    <i data-lucide="log-in"></i> Create Account & Enter
+                </button>
+            </form>
+
+            <div class="sim-divider"><span>OR CONTINUE WITH</span></div>
+
+            <!-- Social OAuth Buttons -->
+            <div class="social-login-grid">
+                <button class="btn btn-secondary social-btn" id="google-login-btn">
+                    <svg class="social-icon" viewBox="0 0 24 24" width="18" height="18">
+                        <path fill="#ea4335" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114A5.59 5.59 0 0 1 8.4 12.928a5.59 5.59 0 0 1 5.59-5.592c2.476 0 4.417 1.62 5.12 3.825l3.968-1.543C21.733 5.485 17.385 3 13.99 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c4.957 0 8.358-3.48 8.358-8.498 0-.416-.036-.826-.1-1.217H12.24Z"/>
+                    </svg>
+                    <span>Google</span>
+                </button>
+                <button class="btn btn-secondary social-btn" id="github-login-btn">
+                    <i data-lucide="github"></i>
+                    <span>GitHub</span>
+                </button>
+            </div>
+            
+            <p class="login-footer">By signing in, you agree to our mock privacy guidelines for academic evaluation.</p>
+        </div>
+    </div>
+
+    <!-- Scripting for validation and redirects -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            lucide.createIcons();
+
+            // Check if already logged in, redirect straight away
+            if (localStorage.getItem("upi_user_profile")) {
+                window.location.href = "index.html";
+            }
+
+            // Theme Management
+            const themeToggleBtn = document.getElementById("theme-toggle-btn");
+            const themeToggleIcon = document.getElementById("theme-toggle-icon");
+            let currentTheme = localStorage.getItem("upi_theme") || "light";
+            document.body.className = `${currentTheme}-theme login-page-body`;
+            updateThemeIcon(currentTheme);
+
+            themeToggleBtn.addEventListener("click", function() {
+                currentTheme = currentTheme === "light" ? "dark" : "light";
+                document.body.className = `${currentTheme}-theme login-page-body`;
+                localStorage.setItem("upi_theme", currentTheme);
+                updateThemeIcon(currentTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                if (theme === "light") {
+                    themeToggleIcon.setAttribute("data-lucide", "moon");
+                } else {
+                    themeToggleIcon.setAttribute("data-lucide", "sun");
+                }
+                lucide.createIcons();
+            }
+
+            // Form Submit Login
+            const loginForm = document.getElementById("login-form");
+            loginForm.addEventListener("submit", function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById("username").value.trim();
+                const email = document.getElementById("email").value.trim();
+                const mobile = document.getElementById("mobile").value.trim();
+
+                // Validate phone number format (standard Indian numbers starting 6-9, 10 digits)
+                const phoneRegex = /^[6-9]\d{9}$/;
+                if (!phoneRegex.test(mobile)) {
+                    alert("Please enter a valid 10-digit mobile number.");
+                    return;
+                }
+
+                // Save user profile state
+                const userProfile = {
+                    username: username,
+                    email: email,
+                    mobile: mobile,
+                    avatarText: getInitials(username),
+                    provider: "credentials"
+                };
+
+                localStorage.setItem("upi_user_profile", JSON.stringify(userProfile));
+                window.location.href = "index.html";
+            });
+
+            // Google Login Mock Trigger
+            document.getElementById("google-login-btn").addEventListener("click", function() {
+                const userProfile = {
+                    username: "Google Saver User",
+                    email: "saver.user@gmail.com",
+                    mobile: "+91 98765 43210",
+                    avatarText: "GS",
+                    provider: "google"
+                };
+                localStorage.setItem("upi_user_profile", JSON.stringify(userProfile));
+                window.location.href = "index.html";
+            });
+
+            // GitHub Login Mock Trigger
+            document.getElementById("github-login-btn").addEventListener("click", function() {
+                const userProfile = {
+                    username: "GitHub Dev Saver",
+                    email: "dev.saver@github.com",
+                    mobile: "+91 87654 32109",
+                    avatarText: "GD",
+                    provider: "github"
+                };
+                localStorage.setItem("upi_user_profile", JSON.stringify(userProfile));
+                window.location.href = "index.html";
+            });
+
+            // Helper to get initials
+            function getInitials(name) {
+                const parts = name.split(" ");
+                if (parts.length >= 2) {
+                    return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+                }
+                return name.substring(0, 2).toUpperCase();
+            }
+        });
+    </script>
+</body>
+</html>
