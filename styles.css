@@ -2711,7 +2711,7 @@ body.dark-theme .social-btn i {
     color: #ffffff;
     box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
 }
-<<<<<<< HEAD
+
 
 /* Auth Tabs (Login / Register Switcher) */
 .auth-tabs {
@@ -2811,5 +2811,4 @@ body.dark-theme .auth-tab.active {
     text-decoration: underline;
 }
 
-=======
->>>>>>> 496c18f464d1845877ed92c0f66d19bd0d2e6dc1
+

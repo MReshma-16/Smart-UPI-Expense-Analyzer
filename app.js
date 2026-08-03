@@ -54,10 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (logoutBtn) {
         logoutBtn.addEventListener("click", function() {
             localStorage.removeItem("upi_user_profile");
-<<<<<<< HEAD
             localStorage.removeItem("upi_current_user_id");
-=======
->>>>>>> 496c18f464d1845877ed92c0f66d19bd0d2e6dc1
             window.location.href = "login.html";
         });
     }
