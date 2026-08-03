@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart UPI Expense Analyzer</title>
+    <!-- Google Fonts: Outfit for headings, Inter for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Data layer (for UPIUserRegistry) -->
+    <script src="data.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="light-theme login-page-body">
+    <!-- Theme Toggle in Corner -->
+    <div class="login-theme-wrapper">
+        <button class="btn-icon" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
+            <i data-lucide="moon" id="theme-toggle-icon"></i>
+        </button>
+    </div>
+
+    <!-- Decorative Background Blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="login-container">
+        <div class="card login-card">
+            <!-- Brand Logo -->
+            <div class="login-brand">
+                <div class="logo-icon">
+                    <i data-lucide="wallet-cards"></i>
+                </div>
+                <h2>UPI<span>Saver</span></h2>
+            </div>
+
+            <!-- Auth Tabs: Login / Register -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tab-login-btn" data-tab="login">Login</button>
+                <button class="auth-tab" id="tab-register-btn" data-tab="register">Register</button>
+            </div>
+
+            <!-- Error/Success Messages -->
+            <div class="auth-message hidden" id="auth-message"></div>
+
+            <!-- ========== LOGIN FORM ========== -->
+            <div class="auth-panel active" id="panel-login">
+                <div class="login-header">
+                    <h3>Welcome Back!</h3>
+                    <p>Enter your email and mobile number to login</p>
+                </div>
+
+                <form id="login-form" class="standard-form">
+                    <div class="form-group">
+                        <label for="login-email">Email ID</label>
+                        <div class="input-with-icon">
+                            <i data-lucide="mail"></i>
+                            <input type="email" id="login-email" placeholder="e.g. rahul@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-mobile">Mobile Number</label>
+                        <div class="input-with-icon">
+                            <i data-lucide="phone"></i>
+                            <input type="tel" id="login-mobile" placeholder="10-digit mobile number" required pattern="^[6-9]\d{9}$">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 10px;">
+                        <i data-lucide="log-in"></i> Login
+                    </button>
+                </form>
+
+                <p class="auth-switch-text">Don't have an account? <a href="#" id="switch-to-register">Register here</a></p>
+            </div>
+
+            <!-- ========== REGISTER FORM ========== -->
+            <div class="auth-panel" id="panel-register">
+                <div class="login-header">
+                    <h3>Create Your Account</h3>
+                    <p>Track your UPI spending patterns and save money smartly</p>
+                </div>
+
+                <form id="register-form" class="standard-form">
+                    <div class="form-group">
+                        <label for="reg-username">Username</label>
+                        <div class="input-with-icon">
+                            <i data-lucide="user"></i>
+                            <input type="text" id="reg-username" placeholder="e.g. Rahul Sharma" required minlength="3">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-email">Email ID</label>
+                        <div class="input-with-icon">
+                            <i data-lucide="mail"></i>
+                            <input type="email" id="reg-email" placeholder="e.g. rahul@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-mobile">Mobile Number</label>
+                        <div class="input-with-icon">
+                            <i data-lucide="phone"></i>
+                            <input type="tel" id="reg-mobile" placeholder="10-digit mobile number" required pattern="^[6-9]\d{9}$">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 10px;">
+                        <i data-lucide="user-plus"></i> Create Account
+                    </button>
+                </form>
+
+                <p class="auth-switch-text">Already have an account? <a href="#" id="switch-to-login">Login here</a></p>
+            </div>
+
+            <div class="sim-divider"><span>OR CONTINUE WITH</span></div>
+
+            <!-- Social OAuth Buttons -->
+            <div class="social-login-grid">
+                <button class="btn btn-secondary social-btn" id="google-login-btn">
+                    <svg class="social-icon" viewBox="0 0 24 24" width="18" height="18">
+                        <path fill="#ea4335" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114A5.59 5.59 0 0 1 8.4 12.928a5.59 5.59 0 0 1 5.59-5.592c2.476 0 4.417 1.62 5.12 3.825l3.968-1.543C21.733 5.485 17.385 3 13.99 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c4.957 0 8.358-3.48 8.358-8.498 0-.416-.036-.826-.1-1.217H12.24Z"/>
+                    </svg>
+                    <span>Google</span>
+                </button>
+                <button class="btn btn-secondary social-btn" id="github-login-btn">
+                    <i data-lucide="github"></i>
+                    <span>GitHub</span>
+                </button>
+            </div>
+
+            <p class="login-footer">By signing in, you agree to our mock privacy guidelines for academic evaluation.</p>
+        </div>
+    </div>
+
+    <!-- Scripting for auth logic -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            lucide.createIcons();
+
+            // If already logged in, redirect straight to dashboard
+            if (localStorage.getItem("upi_user_profile") && localStorage.getItem("upi_current_user_id")) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            // ---- Theme Management ----
+            const themeToggleBtn = document.getElementById("theme-toggle-btn");
+            const themeToggleIcon = document.getElementById("theme-toggle-icon");
+            let currentTheme = localStorage.getItem("upi_theme") || "light";
+            document.body.className = `${currentTheme}-theme login-page-body`;
+            updateThemeIcon(currentTheme);
+
+            themeToggleBtn.addEventListener("click", function() {
+                currentTheme = currentTheme === "light" ? "dark" : "light";
+                document.body.className = `${currentTheme}-theme login-page-body`;
+                localStorage.setItem("upi_theme", currentTheme);
+                updateThemeIcon(currentTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                themeToggleIcon.setAttribute("data-lucide", theme === "light" ? "moon" : "sun");
+                lucide.createIcons();
+            }
+
+            // ---- Tab Switching (Login / Register) ----
+            const tabLoginBtn = document.getElementById("tab-login-btn");
+            const tabRegisterBtn = document.getElementById("tab-register-btn");
+            const panelLogin = document.getElementById("panel-login");
+            const panelRegister = document.getElementById("panel-register");
+            const authMessage = document.getElementById("auth-message");
+
+            function switchTab(tab) {
+                authMessage.classList.add("hidden");
+                authMessage.textContent = "";
+
+                if (tab === "login") {
+                    tabLoginBtn.classList.add("active");
+                    tabRegisterBtn.classList.remove("active");
+                    panelLogin.classList.add("active");
+                    panelRegister.classList.remove("active");
+                } else {
+                    tabRegisterBtn.classList.add("active");
+                    tabLoginBtn.classList.remove("active");
+                    panelRegister.classList.add("active");
+                    panelLogin.classList.remove("active");
+                }
+            }
+
+            tabLoginBtn.addEventListener("click", () => switchTab("login"));
+            tabRegisterBtn.addEventListener("click", () => switchTab("register"));
+            document.getElementById("switch-to-register").addEventListener("click", (e) => { e.preventDefault(); switchTab("register"); });
+            document.getElementById("switch-to-login").addEventListener("click", (e) => { e.preventDefault(); switchTab("login"); });
+
+            // ---- Show Auth Messages ----
+            function showAuthMessage(message, type) {
+                authMessage.textContent = message;
+                authMessage.className = "auth-message auth-message-" + type;
+            }
+
+            // ---- Helper: Get initials from name ----
+            function getInitials(name) {
+                const parts = name.trim().split(" ");
+                if (parts.length >= 2) {
+                    return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+                }
+                return name.substring(0, 2).toUpperCase();
+            }
+
+            // ---- Set session and redirect ----
+            function setSessionAndRedirect(user) {
+                const profile = {
+                    username: user.username,
+                    email: user.email,
+                    mobile: user.mobile,
+                    avatarText: user.avatarText || getInitials(user.username),
+                    provider: user.provider || "credentials"
+                };
+                localStorage.setItem("upi_user_profile", JSON.stringify(profile));
+                localStorage.setItem("upi_current_user_id", user.id);
+                window.location.href = "index.html";
+            }
+
+            // ---- REGISTER Form Submit ----
+            document.getElementById("register-form").addEventListener("submit", function(e) {
+                e.preventDefault();
+
+                const username = document.getElementById("reg-username").value.trim();
+                const email = document.getElementById("reg-email").value.trim();
+                const mobile = document.getElementById("reg-mobile").value.trim();
+
+                // Validate phone
+                if (!/^[6-9]\d{9}$/.test(mobile)) {
+                    showAuthMessage("Please enter a valid 10-digit mobile number.", "error");
+                    return;
+                }
+
+                const result = window.UPIUserRegistry.register({
+                    username: username,
+                    email: email,
+                    mobile: mobile,
+                    avatarText: getInitials(username),
+                    provider: "credentials"
+                });
+
+                if (!result.success) {
+                    showAuthMessage(result.error, "error");
+                    return;
+                }
+
+                // Success - set session and go to fresh dashboard
+                setSessionAndRedirect(result.user);
+            });
+
+            // ---- LOGIN Form Submit ----
+            document.getElementById("login-form").addEventListener("submit", function(e) {
+                e.preventDefault();
+
+                const email = document.getElementById("login-email").value.trim();
+                const mobile = document.getElementById("login-mobile").value.trim();
+
+                // Validate phone
+                if (!/^[6-9]\d{9}$/.test(mobile)) {
+                    showAuthMessage("Please enter a valid 10-digit mobile number.", "error");
+                    return;
+                }
+
+                const result = window.UPIUserRegistry.login(email, mobile);
+
+                if (!result.success) {
+                    showAuthMessage(result.error, "error");
+                    return;
+                }
+
+                // Success - set session and load existing data
+                setSessionAndRedirect(result.user);
+            });
+
+            // ---- Google Login (Quick Register/Login) ----
+            document.getElementById("google-login-btn").addEventListener("click", function() {
+                const googleEmail = "saver.user@gmail.com";
+                const existing = window.UPIUserRegistry.findByEmail(googleEmail);
+
+                if (existing) {
+                    // Already registered - just login
+                    setSessionAndRedirect(existing);
+                } else {
+                    // Auto-register
+                    const result = window.UPIUserRegistry.register({
+                        username: "Google Saver User",
+                        email: googleEmail,
+                        mobile: "9876543210",
+                        avatarText: "GS",
+                        provider: "google"
+                    });
+                    if (result.success) setSessionAndRedirect(result.user);
+                }
+            });
+
+            // ---- GitHub Login (Quick Register/Login) ----
+            document.getElementById("github-login-btn").addEventListener("click", function() {
+                const githubEmail = "dev.saver@github.com";
+                const existing = window.UPIUserRegistry.findByEmail(githubEmail);
+
+                if (existing) {
+                    setSessionAndRedirect(existing);
+                } else {
+                    const result = window.UPIUserRegistry.register({
+                        username: "GitHub Dev Saver",
+                        email: githubEmail,
+                        mobile: "8765432109",
+                        avatarText: "GD",
+                        provider: "github"
+                    });
+                    if (result.success) setSessionAndRedirect(result.user);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
