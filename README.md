@@ -1,6 +1,9 @@
 # Smart UPI Expense Analyzer & Money Saving Assistant
 
-LIVE SERVER LINK : https://mreshma-16.github.io/Smart-UPI-Expense-Analyzer/
+LIVE SERVER LINK     : https://mreshma-16.github.io/Smart-UPI-Expense-Analyzer/
+
+PROTOTYPE VIDEO LINK : https://drive.google.com/file/d/1tjFHDQsu290xNoU7Xvqy9diQXppUHqBT/view?usp=drivesdk
+
 
 A web-based application that analyzes UPI transactions and sends smart notifications to help users control unnecessary spending and save money.
 
